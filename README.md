@@ -29,6 +29,14 @@ swift build -c release
 
 El binario queda en `.build/arm64-apple-macosx/release/OpenCodeGoWidget`.
 
+Para crear una aplicación que puedas abrir desde Finder:
+
+```bash
+chmod +x scripts/build-app.sh
+./scripts/build-app.sh
+open "dist/OpenCode Go Widget.app"
+```
+
 ## Seguridad
 
 La API key no se escribe en archivos del proyecto ni en logs. Se almacena mediante Keychain Services.
