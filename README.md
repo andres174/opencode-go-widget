@@ -40,3 +40,7 @@ open "dist/OpenCode Go Widget.app"
 ## Seguridad
 
 La API key no se escribe en archivos del proyecto ni en logs. Se almacena mediante Keychain Services.
+
+## Roadmap
+
+Consulta [`docs/ROADMAP.md`](docs/ROADMAP.md) para futuras mejoras y el plan de publicación open source en GitHub.
