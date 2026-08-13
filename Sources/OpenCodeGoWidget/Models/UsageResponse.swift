@@ -44,4 +44,8 @@ public struct UsageWindow: Codable, Equatable, Sendable {
         self.percent = percent
         self.resetsAt = resetsAt
     }
+
+    public var validatedPercent: Double {
+        min(max(percent, 0), 100)
+    }
 }

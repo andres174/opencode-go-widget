@@ -5,10 +5,11 @@ APP_NAME="OpenCode Go Widget"
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 APP_DIR="$ROOT_DIR/dist/$APP_NAME.app"
 
-swift build -c release
+swift build -c release --arch arm64 --arch x86_64
 rm -rf "$APP_DIR"
 mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
-cp "$ROOT_DIR/.build/arm64-apple-macosx/release/OpenCodeGoWidget" "$APP_DIR/Contents/MacOS/OpenCodeGoWidget"
+cp "$ROOT_DIR/.build/apple/Products/Release/OpenCodeGoWidget" "$APP_DIR/Contents/MacOS/OpenCodeGoWidget"
+cp "$ROOT_DIR/Resources/AppIcon.icns" "$APP_DIR/Contents/Resources/AppIcon.icns"
 
 cat > "$APP_DIR/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -21,6 +22,8 @@ cat > "$APP_DIR/Contents/Info.plist" <<PLIST
     <string>OpenCodeGoWidget</string>
     <key>CFBundleIdentifier</key>
     <string>com.manatel.opencode-go-widget</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>CFBundleName</key>
     <string>$APP_NAME</string>
     <key>CFBundlePackageType</key>

@@ -12,7 +12,13 @@ public enum KeychainError: Error, LocalizedError {
     }
 }
 
-public struct KeychainService: Sendable {
+public protocol KeychainStoring {
+    func read() throws -> String?
+    func save(_ value: String) throws
+    func delete() throws
+}
+
+public struct KeychainService: KeychainStoring, Sendable {
     private let service: String
     private let account: String
 

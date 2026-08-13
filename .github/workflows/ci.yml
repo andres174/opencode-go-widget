@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests
+        run: swift test
+
+      - name: Build universal release binary
+        run: swift build -c release --arch arm64 --arch x86_64
+
+      - name: Build app bundle
+        run: ./scripts/build-app.sh
+
+      - name: Verify universal binary
+        run: lipo -info "dist/OpenCode Go Widget.app/Contents/MacOS/OpenCodeGoWidget" | grep -E "arm64.*x86_64|x86_64.*arm64"
