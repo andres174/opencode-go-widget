@@ -84,13 +84,13 @@ OpenCode Go Widget como proyecto open source en GitHub.
 
 ### 2. Configurar GitHub
 
-- [ ] Crear un repositorio público, preferiblemente con el nombre `opencode-go-widget`.
-- [ ] Añadir descripción, topics (`swift`, `macos`, `menubar`, `opencode`) y URL del proyecto.
-- [ ] Configurar la rama por defecto como `main`.
-- [ ] Activar Issues y Discussions solo si se van a mantener.
+- [x] Crear un repositorio público, preferiblemente con el nombre `opencode-go-widget` (creado: `github.com/andres174/opencode-go-widget`).
+- [x] Añadir descripción, topics (`swift`, `macos`, `menubar`, `opencode`) y URL del proyecto.
+- [x] Configurar la rama por defecto como `main`.
+- [ ] Activar Issues y Discussions solo si se van a mantener (Issues activos por defecto).
 - [x] Añadir una plantilla de bug y otra de feature request.
-- [ ] Activar Dependabot si se incorporan dependencias externas (sin dependencias externas por ahora).
-- [ ] Proteger `main` exigiendo CI verde antes de hacer merge.
+- [x] Activar Dependabot si se incorporan dependencias externas (sin dependencias externas por ahora).
+- [x] Proteger `main` exigiendo CI verde antes de hacer merge (check `test-and-build`, strict).
 
 ### 3. Añadir CI antes de publicar
 
@@ -108,10 +108,10 @@ deben usar respuestas mock o una sesión URLProtocol controlada por los tests.
 
 ### 4. Primera publicación
 
-- [ ] Crear un commit inicial limpio con licencia y documentación.
-- [ ] Crear el tag `v0.1.0` solo cuando CI esté verde.
-- [ ] Publicar una release con instrucciones de instalación y limitaciones conocidas.
-- [ ] No incluir la API key ni un `.app` sin firmar como si fuera una distribución confiable.
+- [x] Crear un commit inicial limpio con licencia y documentación.
+- [x] Crear el tag `v0.1.0` solo cuando CI esté verde.
+- [x] Publicar una release con instrucciones de instalación y limitaciones conocidas (assets: zip universal + SHA256SUMS).
+- [x] No incluir la API key ni un `.app` sin firmar como si fuera una distribución confiable (la release 0.1.0 se publica sin firma hasta disponer del certificado Developer ID).
 - [x] Documentar que el usuario configura su propia API key en Keychain.
 
 ### 5. Releases posteriores
@@ -129,6 +129,6 @@ deben usar respuestas mock o una sesión URLProtocol controlada por los tests.
 - ~~Umbrales y frecuencia de notificaciones.~~ Resuelto: notificaciones opt-in por umbral (70/85/90) y
   solo al cruzar el umbral; la frecuencia de refresco es configurable (5/15/30/60 minutos).
 - ~~Compatibilidad mínima definitiva de macOS e Intel.~~ Resuelto: macOS 13+, bundle universal (arm64 + x86_64).
-- Nombre y propietario del repositorio GitHub.
-- Si se publicará solo el código o también binarios precompilados (el flujo de release ya
-  empaqueta binarios; queda decidir si se publican sin firma).
+- ~~Nombre y propietario del repositorio GitHub.~~ Resuelto: `github.com/andres174/opencode-go-widget`.
+- ~~Si se publicará solo el código o también binarios precompilados.~~ Resuelto: código + binarios; el flujo de
+  release empaqueta el zip universal con checksums (la firma queda pendiente del certificado Developer ID).
