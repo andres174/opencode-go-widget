@@ -4,6 +4,8 @@ struct UsageRowView: View {
     let title: String
     let window: UsageWindow
 
+    private let resetFormatter = ResetDateFormatter()
+
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
@@ -15,10 +17,13 @@ struct UsageRowView: View {
             }
             ProgressView(value: window.validatedPercent, total: 100)
                 .tint(color)
-            if let resetsAt = window.resetsAt {
-                Text("Resets: \(formattedDate(resetsAt))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            if window.resetsAt != nil {
+                TimelineView(.periodic(from: .now, by: 60)) { context in
+                    Text(resetText(relativeTo: context.date))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .help(exactResetText ?? "")
             }
         }
         .accessibilityElement(children: .combine)
@@ -34,15 +39,20 @@ struct UsageRowView: View {
         }
     }
 
-    private var accessibilityLabel: String {
-        if let resetsAt = window.resetsAt, let date = ISO8601DateFormatter().date(from: resetsAt) {
-            return "\(title), resets \(date.formatted(date: .abbreviated, time: .shortened))"
-        }
-        return title
+    private func resetText(relativeTo now: Date) -> String {
+        resetFormatter.friendlyResetText(resetsAt: window.resetsAt, relativeTo: now)
+            ?? window.resetsAt
+            ?? ""
     }
 
-    private func formattedDate(_ value: String) -> String {
-        guard let date = ISO8601DateFormatter().date(from: value) else { return value }
-        return date.formatted(date: .abbreviated, time: .shortened)
+    private var exactResetText: String? {
+        resetFormatter.exactResetText(resetsAt: window.resetsAt)
+    }
+
+    private var accessibilityLabel: String {
+        if let exactResetText {
+            return "\(title), \(exactResetText)"
+        }
+        return title
     }
 }
