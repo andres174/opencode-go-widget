@@ -10,7 +10,7 @@ public struct ResetDateFormatter: Sendable {
     }
 
     public func friendlyResetText(resetsAt: String?, relativeTo now: Date) -> String? {
-        guard let resetsAt, let resetDate = ISO8601DateFormatter().date(from: resetsAt) else {
+        guard let resetsAt, let resetDate = parseDate(resetsAt) else {
             return nil
         }
 
@@ -52,7 +52,7 @@ public struct ResetDateFormatter: Sendable {
     }
 
     public func exactResetText(resetsAt: String?) -> String? {
-        guard let resetsAt, let resetDate = ISO8601DateFormatter().date(from: resetsAt) else {
+        guard let resetsAt, let resetDate = parseDate(resetsAt) else {
             return nil
         }
         return exactFormatter.string(from: resetDate)
@@ -62,6 +62,12 @@ public struct ResetDateFormatter: Sendable {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = timeZone
         return calendar
+    }
+
+    private func parseDate(_ value: String) -> Date? {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter.date(from: value) ?? ISO8601DateFormatter().date(from: value)
     }
 
     private var dateFormatter: DateFormatter {

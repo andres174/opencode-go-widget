@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - unreleased
+
+### Fixed
+
+- Parse reset timestamps containing fractional seconds, so the UI no longer
+  falls back to raw ISO 8601 strings.
+
 ## [0.2.0] - unreleased
 
 ### Changed

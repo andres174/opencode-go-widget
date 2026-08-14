@@ -23,6 +23,15 @@ final class ResetDateFormatterTests: XCTestCase {
         XCTAssertNil(formatter.friendlyResetText(resetsAt: "not-a-date", relativeTo: now))
     }
 
+    func testParsesDateWithFractionalSeconds() {
+        let value = "2023-11-15T18:13:20.995Z"
+
+        XCTAssertEqual(
+            formatter.friendlyResetText(resetsAt: value, relativeTo: now),
+            "Resets tomorrow"
+        )
+    }
+
     func testResetsNowWithinAMinute() {
         let future = now.addingTimeInterval(30)
         let text = formatter.friendlyResetText(resetsAt: iso(future), relativeTo: now)
