@@ -15,6 +15,8 @@ final class UsageViewModel: ObservableObject {
 
     @Published private(set) var state: State = .idle
     @Published private(set) var lastUpdated: Date?
+    @Published private(set) var latestUsage: UsageResponse?
+    @Published private(set) var isRefreshing = false
 
     private let keychain: any KeychainStoring
     private let client: UsageAPIClient
@@ -23,7 +25,6 @@ final class UsageViewModel: ObservableObject {
     let history: UsageHistoryStore
     private var refreshTask: Task<Void, Never>?
     private var pendingRefresh: Task<Void, Never>?
-    private var isRefreshing = false
     private var previousUsage: UsageResponse?
     private var cancellables = Set<AnyCancellable>()
 
@@ -82,16 +83,22 @@ final class UsageViewModel: ObservableObject {
         guard !isRefreshing else { return }
         do {
             guard let apiKey = try keychain.read(), !apiKey.isEmpty else {
+                latestUsage = nil
+                previousUsage = nil
+                lastUpdated = nil
                 state = .needsAPIKey
                 return
             }
             isRefreshing = true
-            state = .loading
+            if latestUsage == nil {
+                state = .loading
+            }
             defer { isRefreshing = false }
             let usage = try await client.fetchUsage(apiKey: apiKey)
             await sendThresholdNotifications(previous: previousUsage, current: usage)
             previousUsage = usage
             recordSnapshot(usage)
+            latestUsage = usage
             state = .loaded(usage)
             lastUpdated = Date()
         } catch let error as URLError {
@@ -116,6 +123,7 @@ final class UsageViewModel: ObservableObject {
             pendingRefresh?.cancel()
             pendingRefresh = nil
             previousUsage = nil
+            latestUsage = nil
             history.clear()
             state = .needsAPIKey
             lastUpdated = nil
@@ -160,11 +168,12 @@ final class UsageViewModel: ObservableObject {
     }
 
     var summaryPercent: Double? {
-        guard case .loaded(let response) = state else { return nil }
-        return usageWindow(of: response).validatedPercent
+        guard let usage = latestUsage else { return nil }
+        return usageWindow(of: usage).validatedPercent
     }
 
     var summarySymbol: String? {
+        if latestUsage != nil { return nil }
         switch state {
         case .loading: return "hourglass"
         case .failed, .offline: return "exclamationmark.triangle"

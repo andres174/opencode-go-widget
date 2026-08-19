@@ -7,7 +7,7 @@ A macOS menu bar widget that checks your OpenCode Go usage and stores the API ke
 1. Download `OpenCodeGoWidget-<version>-universal.zip` from the latest GitHub release.
 2. Unzip it and drag `OpenCode Go Widget.app` into `/Applications` (or anywhere you like).
 3. Right-click the app and choose `Open` the first time to confirm you trust it (Gatekeeper).
-4. Open the menu bar icon, choose `Settings`, and paste your OpenCode Go API key.
+4. Open the menu bar icon, choose `Settings` (inside the popover), and paste your OpenCode Go API key.
 
 The widget runs only in the menu bar; it has no Dock icon.
 
@@ -32,9 +32,11 @@ The widget runs only in the menu bar; it has no Dock icon.
 swift run
 ```
 
-On first launch, open `Settings` and enter your API key. The app queries the endpoint every 15 minutes and also supports manual refresh.
+On first launch, open `Settings` inside the menu bar popover and enter your API key. Command-, also opens the Settings window. The app queries the endpoint every 15 minutes and also supports manual refresh.
 
 ## Settings
+
+Settings open inside the menu bar popover so the widget stays visible. Command-, still opens a separate Settings window.
 
 - **Refresh interval**: choose between 5, 15, 30 and 60 minutes.
 - **Menu bar metric**: pick which usage window (rolling, weekly or monthly) shows in the menu bar and in the history chart.

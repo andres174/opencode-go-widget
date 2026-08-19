@@ -7,14 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.1] - unreleased
+## [0.3.0] - 2026-08-19
+
+### Changed
+
+- Settings opens inside the menu bar popover (Back to return) so the panel
+  stays open while you edit preferences. Cmd+, still opens the Settings window.
+- History is a full-width control with the chevron on the right, and the chart
+  uses the selected metric's threshold color plus a metric caption.
+- Manual refresh keeps the last usage on screen; a later network or API error
+  shows a banner instead of replacing the metrics.
+- The menu bar percentage uses the same green / orange / red threshold colors
+  as the usage rows.
+
+### Fixed
+
+- Clicking Settings presented a sheet that dismissed the MenuBarExtra window.
+- History could only be expanded by clicking the disclosure chevron.
+
+## [0.2.1] - 2026-08-14
 
 ### Fixed
 
 - Parse reset timestamps containing fractional seconds, so the UI no longer
   falls back to raw ISO 8601 strings.
 
-## [0.2.0] - unreleased
+## [0.2.0] - 2026-08-14
 
 ### Changed
 

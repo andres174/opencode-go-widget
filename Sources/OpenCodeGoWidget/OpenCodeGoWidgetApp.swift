@@ -12,6 +12,7 @@ struct OpenCodeGoWidgetApp: App {
             if let percent = viewModel.summaryPercent {
                 Text("\(percent, specifier: "%.0f")%")
                     .monospacedDigit()
+                    .foregroundStyle(UsageTone.color(for: percent))
                     .accessibilityLabel("Usage: \(Int(percent.rounded())) percent")
             } else if let symbol = viewModel.summarySymbol {
                 Image(systemName: symbol)
@@ -22,7 +23,7 @@ struct OpenCodeGoWidgetApp: App {
         .menuBarExtraStyle(.window)
 
         Settings {
-            SettingsView(viewModel: viewModel, preferences: preferences, isPresented: .constant(true))
+            SettingsView(viewModel: viewModel, preferences: preferences, isPresented: .constant(true), isEmbedded: false)
         }
     }
 

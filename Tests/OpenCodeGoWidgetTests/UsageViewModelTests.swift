@@ -229,6 +229,7 @@ final class UsageViewModelTests: XCTestCase {
 
         XCTAssertEqual(viewModel.state, .needsAPIKey)
         XCTAssertNil(viewModel.lastUpdated)
+        XCTAssertNil(viewModel.latestUsage)
     }
 
     func testConcurrentRefreshesCoalesceIntoSingleRequest() async {
@@ -390,6 +391,53 @@ final class UsageViewModelTests: XCTestCase {
         await viewModel.refresh()
 
         XCTAssertTrue(notifier.sentNotifications.isEmpty)
+    }
+
+    func testSubsequentRefreshDoesNotEnterLoadingState() async {
+        BlockingMockURLProtocol.body = Self.payload(monthlyPercent: 35)
+        let (viewModel, _) = makeViewModel(keychain: MockKeychain(storedValue: "test-key"))
+        await viewModel.refresh()
+        guard case .loaded = viewModel.state else {
+            return XCTFail("Expected loaded state, got \(viewModel.state)")
+        }
+
+        BlockingMockURLProtocol.gate = DispatchSemaphore(value: 0)
+        BlockingMockURLProtocol.body = Self.payload(monthlyPercent: 40)
+        async let refresh: Void = viewModel.refresh()
+        await waitUntil(BlockingMockURLProtocol.requestCount == 2)
+
+        XCTAssertTrue(viewModel.isRefreshing)
+        guard case .loaded = viewModel.state else {
+            return XCTFail("Expected loaded during subsequent refresh, got \(viewModel.state)")
+        }
+        XCTAssertEqual(viewModel.summaryPercent, 35)
+        XCTAssertNil(viewModel.summarySymbol)
+
+        BlockingMockURLProtocol.gate?.signal()
+        _ = await refresh
+
+        XCTAssertFalse(viewModel.isRefreshing)
+        XCTAssertEqual(viewModel.summaryPercent, 40)
+        XCTAssertEqual(viewModel.latestUsage?.usage.monthly.percent, 40)
+    }
+
+    func testFailedRefreshAfterSuccessKeepsLatestUsage() async {
+        BlockingMockURLProtocol.body = Self.payload(monthlyPercent: 35)
+        let (viewModel, _) = makeViewModel(keychain: MockKeychain(storedValue: "test-key"))
+        await viewModel.refresh()
+        let updated = viewModel.lastUpdated
+        XCTAssertNotNil(viewModel.latestUsage)
+
+        BlockingMockURLProtocol.error = URLError(.notConnectedToInternet)
+        await viewModel.refresh()
+
+        guard case .offline = viewModel.state else {
+            return XCTFail("Expected offline state, got \(viewModel.state)")
+        }
+        XCTAssertEqual(viewModel.latestUsage?.usage.monthly.percent, 35)
+        XCTAssertEqual(viewModel.summaryPercent, 35)
+        XCTAssertEqual(viewModel.lastUpdated, updated)
+        XCTAssertNil(viewModel.summarySymbol)
     }
 
     private func waitForLoadedState(_ viewModel: UsageViewModel) async {

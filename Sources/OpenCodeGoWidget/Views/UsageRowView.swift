@@ -15,8 +15,7 @@ struct UsageRowView: View {
                     .font(.headline.monospacedDigit())
                     .foregroundStyle(color)
             }
-            ProgressView(value: window.validatedPercent, total: 100)
-                .tint(color)
+            progressBar
             if window.resetsAt != nil {
                 TimelineView(.periodic(from: .now, by: 60)) { context in
                     Text(resetText(relativeTo: context.date))
@@ -31,12 +30,28 @@ struct UsageRowView: View {
         .accessibilityValue("\(Int(window.validatedPercent.rounded())) percent")
     }
 
-    private var color: Color {
-        switch window.validatedPercent {
-        case 90...: return .red
-        case 70..<90: return .orange
-        default: return .green
+    private var progressBar: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Color.primary.opacity(0.12))
+                Capsule()
+                    .fill(color)
+                    .frame(width: fillWidth(in: geometry.size.width))
+            }
         }
+        .frame(height: 7)
+        .accessibilityHidden(true)
+    }
+
+    private var color: Color {
+        UsageTone.color(for: window.validatedPercent)
+    }
+
+    private func fillWidth(in total: CGFloat) -> CGFloat {
+        let ratio = window.validatedPercent / 100
+        guard ratio > 0 else { return 0 }
+        return max(total * ratio, 6)
     }
 
     private func resetText(relativeTo now: Date) -> String {
